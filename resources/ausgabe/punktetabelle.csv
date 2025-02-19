@@ -1,0 +1,5 @@
+Matrikelnummer,Nachname,Vorname,E-Mail,Schein?,Aufgabe 1,Aufgabe 2,Aufgabe 3,insgt. punkte,note
+67890,a,vorname 2,abcd.defg@gmail.com,Kein Schein,22.0,3.0,3.0,28.0,1
+678902,b,vschein2,abcd.defg@gmail.com,Schein,31.0,3.0,3.0,37.0,1
+123452,d,vschein1,abc.def@gmail.com,Schein,3.0,3.0,3.0,9.0,1
+12345,x,vorname 1,abc.def@gmail.com,Kein Schein,33.0,1.0,12.0,46.0,1
