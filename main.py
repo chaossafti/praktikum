@@ -2,10 +2,15 @@ from tabellenGenerator import generate_output
 from CSVIO import read_csv
 from sys import argv
 
+
+smiley_save_file = ""
+
 if __name__ == '__main__':
-    if len(argv) < 5:
-        print("<studenten.csv> <schein_studenten.csv> <notentabelle.csv> <bestandentabelle.csv> <punktetabelle.csv>")
+    if len(argv) < 6:
+        print("<studenten.csv> <schein_studenten.csv> <notentabelle.csv> <bestandentabelle.csv> <punktetabelle.csv> <smiley_diagram.csv>")
         exit(1)
+
+    smiley_save_file = argv[6]
 
     students: list[dict] = read_csv(argv[1])
     schein_students: list[dict] = read_csv(argv[2])

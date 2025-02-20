@@ -1,11 +1,23 @@
+import math
+from sys import argv
 from tkinter import *
+
 import TabellenGUi
 import absBoxPlot
 import notenTabelle
 import relBoxPlot
 from BarChart import BarChart
 import grading
+from CSVIO import read_csv
+from kreisdiagram import Kreisdiagram
 
+
+_SMILEY_TO_COLOR = {
+    ":)": "green",
+    ":|": "yellow",
+    ":(": "red",
+    "X": "gray"
+}
 
 class Window(Tk):
 
@@ -38,14 +50,20 @@ class Window(Tk):
 
     def __init__(self, table: TabellenGUi):
         super().__init__(className="Auswertung")
+        self.pie_chart_select_task_entry = None
+        self.emoji_window = None
+        self.smiley_table = None
+
         self.table = table
         table.on_save(alert=False)
         self.table_canvas = Canvas(self, height=24*4)
-        self.diagram_canvas = Canvas(self)
+        self.diagram_canvas = Canvas(self, height=700)
         self.button_canvas = Canvas(self, width=self.winfo_reqwidth())
+        self.pie_chart_canvas = Canvas(self, width=self.winfo_reqwidth())
 
         self.table_canvas.pack(side="top", anchor="w")
         self.button_canvas.pack(side="bottom", anchor="w")
+        self.pie_chart_canvas.pack(side="bottom", anchor="w")
         self.diagram_canvas.pack(side="bottom", anchor="w")
 
         self.order = ["barchart", "rel", "abs"]
@@ -53,7 +71,12 @@ class Window(Tk):
         self.notenspiegel = grading.create_notenspiegel(table.students)
         self.notentabelle = notenTabelle.NotenTabelle(self.table_canvas, table.students, table)
         self.notentabelle.calculate_grades_button.config(command=self.reload)
+        self.notentabelle.emoji_button.config(command=self.show_emoji_table)
 
+        self.smiley_data: list[dict] = read_csv(argv[6])
+        self.pie_chart_data = {}
+
+        self.pie_charts: dict = {}
 
         self.bar_chart = BarChart(self.diagram_canvas, self.notenspiegel, 40, 5, 0, 250)
         self.rel_boxplot = relBoxPlot.Boxplot(self.diagram_canvas, self.get_rel_boxplot_data())
@@ -61,63 +84,38 @@ class Window(Tk):
         self.total_len = self.rel_boxplot.winfo_reqwidth() + self.abs_boxplot.winfo_reqwidth() + self.bar_chart.winfo_reqwidth()
         self.name_to_diagram = {"barchart": self.bar_chart, "rel": self.rel_boxplot, "abs": self.abs_boxplot}
 
-        def move_left(index: int):
-            to_move = self.order[index]
-            left_index = index - 1 if index > 0 else 2
-            left = self.order[left_index]
-            self.order[left_index] = to_move
-            self.order[index] = left
-
-            self.redraw()
-
-        def move_right(index: int):
-            to_move = self.order[index]
-            right_index = index + 1 if index < 2 else 0
-            right = self.order[right_index]
-            self.order[right_index] = to_move
-            self.order[index] = right
-
-            self.redraw()
-
-
-        def move_first_left():
-            move_left(0)
-        def move_second_left():
-            move_left(1)
-        def move_third_left():
-            move_left(2)
-
-        def move_first_right():
-            move_right(0)
-        def move_second_right():
-            move_right(1)
-        def move_third_right():
-            move_right(2)
-
-        # first diagram
-        b = Button(self.button_canvas, text=str("<"), command=move_first_left)
-        b.grid(row=0, column=0, padx=500*0.32)
-
-        b = Button(self.button_canvas, text=str(">"), command=move_first_right)
-        b.grid(row=0, column=1)
-
-
-        # second diagram
-        b = Button(self.button_canvas, text=str("<"), command=move_second_left)
-        b.grid(row=0, column=2, padx=500*0.55)
-
-        b = Button(self.button_canvas, text=str(">"), command=move_second_right)
-        b.grid(row=0, column=3)
-
-
-        # third diagram
-        b = Button(self.button_canvas, text=str("<"), command=move_third_left)
-        b.grid(row=0, column=4, padx=500*0.5)
-
-        b = Button(self.button_canvas, text=str(">"), command=move_third_right)
-        b.grid(row=0, column=5)
-
         self.draw()
+
+
+    def set_smiley_data(self, smiley_data: list[dict]):
+        self.smiley_data = smiley_data
+        self.redraw_all_pie_charts()
+
+    def redraw_all_pie_charts(self):
+        for task in range(self.table.task_count):
+            chart = self.pie_charts[task]
+            chart.redraw(self.gather_piechart_data(task))
+
+    def show_emoji_table(self):
+        import smileyTabelle
+        self.emoji_window = Tk()
+        self.smiley_table = smileyTabelle.SmileyTabelle(self.emoji_window, self.table.task_count, self)
+        self.emoji_window.mainloop()
+
+    def gather_piechart_data(self, task) -> list[tuple[int, str]]:
+        ratings = {}
+        for rating in self.smiley_data:
+            if rating["task"] == task:
+                ratings = rating
+                break
+
+        data = []
+        for sm in _SMILEY_TO_COLOR.keys():
+            c = _SMILEY_TO_COLOR[sm]
+            data.append((ratings[sm], c))
+
+        return data
+
 
     def reload(self):
         self.notentabelle.reload()
@@ -130,14 +128,21 @@ class Window(Tk):
         self.notentabelle.notenspiegel = grading.create_notenspiegel(self.table.students)
         self.bar_chart.redraw(self.notentabelle.notenspiegel)
 
+
+
     def redraw(self):
         self.draw()
 
     def draw(self):
-        i: int = -1
-        for d in self.order:
-            i += 1
-            self.name_to_diagram[d].grid(row=2, column=i)
+        self.bar_chart.grid(row=2, column=0)
+        self.rel_boxplot.grid(row=2, column=1)
+        self.abs_boxplot.grid(row=2, column=2)
+
+        for task in range(self.table.task_count):
+            chart = Kreisdiagram(self.pie_chart_canvas, self.gather_piechart_data(task), "Evaluation A" + str(task+1))
+            chart.grid(row=math.floor(task / 10), column=task % 10)
+            self.pie_charts[task] = chart
+
 
 
 

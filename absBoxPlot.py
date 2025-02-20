@@ -1,10 +1,7 @@
 import math
 from tkinter import *
 
-from PIL.ImageEnhance import Color
-
 _VERTICAL_NODES = 11
-
 
 def count_match(l: list, f):
     count: int = 0
@@ -54,6 +51,10 @@ class Boxplot(Canvas):
 
     def draw(self):
         horizontal_distance_step_size = self.distance / self.steps
+
+        # title
+        self.create_text(250, 20, text="Punkte Absolut")
+
 
         # horizontal line
         for i in range(self.steps):

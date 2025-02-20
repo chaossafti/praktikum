@@ -5,9 +5,7 @@ from tkinter import *
 import re
 import pyautogui
 from AuswertungWindow import Window
-import absBoxPlot
 import grading
-import relBoxPlot
 import tabellenGenerator
 from CSVIO import write_csv, read_csv
 from Tabelle import Tabelle
@@ -38,10 +36,6 @@ class PunkteTabelle(Tabelle):
     def __init__(self, root: Tk, students: list[dict], output_paths: tuple[str, str, str],task_count: int):
         super().__init__(root)
         self.auswertung_window = None
-        self.box_plot_window = None
-        self.box_plot = None
-        self.notendiagramm = None
-        self.notendiagramm_window: Tk | None = None
         self.students = students
         self.notentabelle_file_path: str = output_paths[0]
         self.bestandentabelle_file_path: str = output_paths[1]
@@ -99,7 +93,6 @@ class PunkteTabelle(Tabelle):
         for row in range(len(students)):
             sum_points: float = 0
             for task in range(self.task_count):
-                text: str = self._ENTRYS[(row + 1, task + _TASK_START_INDEX)].get()
                 points: float = self.get_points_on_task_from_row(row+1, task)
                 if points == -1:
                     self.notify_invalid_points_entered_at(row+1, task)
@@ -175,9 +168,12 @@ class PunkteTabelle(Tabelle):
             self.on_save()
             time.sleep(0.1)
             self.root.quit()
+            exit(0)
         elif clicked == _CLOSE:
             time.sleep(0.1)
             self.root.quit()
+            exit(0)
+
 
     def on_save(self, alert: bool = True):
         # run when button is pressed

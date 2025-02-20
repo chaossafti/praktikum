@@ -45,6 +45,17 @@ class NotenTabelle(Tabelle):
 
         self.calculate_grades_button.grid(row=2, column=12)
 
+        # "Neu laden" button
+        self.calculate_grades_button = Button(self.tabelle_canvas, command=self.reload)
+        self.calculate_grades_button.config(text="Neu laden")
+
+        self.calculate_grades_button.grid(row=2, column=12)
+        # "Neu laden" button
+        self.emoji_button = Button(self.tabelle_canvas)
+        self.emoji_button.config(text="smiley tabelle")
+
+        self.emoji_button.grid(row=2, column=13)
+
     def reload(self):
 
         # update the total points and required points to succeed values

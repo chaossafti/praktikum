@@ -57,6 +57,9 @@ class Boxplot(Canvas):
     def draw(self):
         horizontal_distance_step_size = self.distance / self.steps
 
+        # title
+        self.create_text(250, 20, text="Punkte Relativ")
+
         # horizontal line
         for i in range(self.steps):
             start_x: int = int(self.abs_x_start + horizontal_distance_step_size * i)

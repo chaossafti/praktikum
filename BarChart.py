@@ -14,7 +14,8 @@ class BarChart(Canvas):
         self.draw()
 
     def draw(self):
-        # draw the actual chart
+        # title
+        self.create_text(250, 20, text="Noten")
 
         x: int = self.x
         y: int = self.y
@@ -22,6 +23,7 @@ class BarChart(Canvas):
         available_height: float = self.winfo_reqheight()*0.85
         scale: float = available_height / max(self.data.values())
 
+        # draw each data point
         for name in self.data:
             height: float = self.data[name] * scale
             self.create_rectangle(x + self.width, y - height, x, y, fill="orange")

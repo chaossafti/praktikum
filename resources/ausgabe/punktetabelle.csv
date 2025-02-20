@@ -1,5 +1,5 @@
 Matrikelnummer,Nachname,Vorname,E-Mail,Schein?,Aufgabe 1,Aufgabe 2,Aufgabe 3,insgt. punkte,note
-67890,a,vorname 2,abcd.defg@gmail.com,Kein Schein,22.0,3.0,3.0,28.0,5
-678902,b,vschein2,abcd.defg@gmail.com,Schein,2.0,0.0,1.0,3.0,5
-123452,d,vschein1,abc.def@gmail.com,Schein,8.5,0.0,0.0,8.5,5
-12345,x,vorname 1,abc.def@gmail.com,Kein Schein,4.0,0.0,0.0,4.0,5
+67890,a,vorname 2,abcd.defg@gmail.com,Kein Schein,5.0,0.0,0.0,5.0,1
+678902,b,vschein2,abcd.defg@gmail.com,Schein,2.0,22.0,0.0,24.0,1
+123452,d,vschein1,abc.def@gmail.com,Schein,0.0,2.0,0.0,2.0,5
+12345,x,vorname 1,abc.def@gmail.com,Kein Schein,0.0,0.0,0.0,0.0,5
