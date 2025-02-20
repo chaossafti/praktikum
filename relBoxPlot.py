@@ -48,7 +48,7 @@ class Boxplot(Canvas):
 
         self.draw()
 
-    def redraw(self, data: list[int, list[float]]):
+    def redraw(self, data: dict[int, list[float]]):
         self.data = data
         self.assign_vars()
         self.delete("all")

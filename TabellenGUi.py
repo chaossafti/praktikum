@@ -160,39 +160,6 @@ class PunkteTabelle(Tabelle):
 
 
     def on_close(self):
-        # check for any changes
-        dirty: bool = False
-        for row in range(1, len(self.students)):
-            for task in range(self.task_count):
-                points = self.get_points_on_task_from_row(row, task)
-                if points == -1:
-                    self.notify_invalid_points_entered_at(row, task)
-                    continue
-
-                student_in_last_save: dict = {}
-                for student in self.last_save:
-                    if student["Matrikelnummer"] == self.matrikelnummer_from_row(row):
-                        student_in_last_save = student
-                        break
-
-                try:
-                    if points != student_in_last_save["Aufgabe " + str(task + 1)]:
-                        dirty = True
-                        break
-
-                except KeyError:
-                    dirty = True
-                    break
-
-            # inner loop also breaks outer loop
-            else:
-                continue
-            break
-
-        if not dirty:
-            self.root.quit()
-            return
-
         _SAVE_CLOSE = "Speichern und Schließen"
         _CLOSE = "Schließen ohne zu Speichern"
         _CANCEL = "Abbrechen"
