@@ -67,3 +67,22 @@ def grade_all(students: list[dict]) -> list[dict]:
         student["note"] = get_grade(student["insgt. punkte"] if "insgt. punkte" in student else 0)
 
     return students
+
+def create_notenspiegel(students) -> dict[str, int]:
+    notenspiegel: dict[float, int] = {}
+    for student in students:
+        if student["note"] in notenspiegel:
+            notenspiegel[student["note"]] += 1
+        else:
+            notenspiegel[student["note"]] = 1
+
+    sorted_grades = sorted(grade_at_scale)
+    result: dict[str, int] = {}
+    for n in sorted_grades:
+        grade: float = grade_at_scale[n]
+        if grade in notenspiegel:
+            result[str(grade)] = notenspiegel[grade]
+        else:
+            result[str(grade)] = 0
+
+    return result

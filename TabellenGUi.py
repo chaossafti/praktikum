@@ -1,4 +1,5 @@
 import os.path
+import time
 import tkinter
 from tkinter import *
 import re
@@ -79,19 +80,19 @@ class PunkteTabelle(Tabelle):
                     # points
                     task_index: str = "Aufgabe " + str(column - _TASK_START_INDEX + 1)
                     student_from_save: dict = {}
+
                     for saved_student in self.last_save:
                         if saved_student["Matrikelnummer"] == matrikelnummer:
                             student_from_save = saved_student
 
                     if student_from_save is not None and task_index in student_from_save:
                         # the student already has points assigned in the last save
-
-                        self.place_entry(row + 1, column, str(student_from_save[task_index]), editable=True,
-                                         width=_POINTS_ENTRY_WIDTH)
+                        self.place_entry(row + 1, column, str(student_from_save[task_index]), editable=True, width=_POINTS_ENTRY_WIDTH)
 
                     else:
                         # no points assigned yet
-                        self.place_entry(row + 1, column, "", editable=True, width=_POINTS_ENTRY_WIDTH)
+                        self.place_entry(row + 1, column, "0", editable=True, width=_POINTS_ENTRY_WIDTH)
+
 
         # "note", "insgt. punkte" and "Bestanden?" column
         sum_grades: int = 0
@@ -103,16 +104,17 @@ class PunkteTabelle(Tabelle):
                 if points == -1:
                     self.notify_invalid_points_entered_at(row+1, task)
                     continue
-                points = float(text.replace(',', '.'))
                 sum_points += points
 
             grade: int = grading.get_grade(sum_points)
             sum_grades += grade
-            self.place_entry(row + 1, _TASK_START_INDEX + self.task_count, str(sum_points), editable=False)
-            self.place_entry(row + 1, _TASK_START_INDEX + self.task_count + 1, str(grade), editable=False,
+            self.place_entry(row + 1, _TASK_START_INDEX + self.task_count, str(sum_points), editable=False) # insgt. punkte
+            self.place_entry(row + 1, _TASK_START_INDEX + self.task_count + 1, str(grade), editable=False, # grade
                              width=_GRADE_ENTRY_WIDTH)
             self.place_entry(row + 1, _TASK_START_INDEX + self.task_count + 2,
-                             str("Bestanden" if grade < 5 else "Nicht Bestanden"), editable=False)
+                             str("Bestanden" if grade < 5 else "Nicht Bestanden"), editable=False) # bestanden
+
+
 
         # average grade entry
         self.place_entry(len(students) + 1, self.task_count + _TASK_START_INDEX + 1, str(sum_grades / len(students)),
@@ -141,29 +143,11 @@ class PunkteTabelle(Tabelle):
 
         self.create_tables.grid(row=len(students) - 1, column=button_start_column)
 
-        # "Notendiagramm" button
-        self.calculate_grades_button = Button(self.root, command=self.show_notendiagramm)
-        self.calculate_grades_button.config(text="Notendiagramm")
-
-        self.calculate_grades_button.grid(row=len(students) + 2, column=button_start_column)
-
-        # "boxplot abs." button
-        self.calculate_grades_button = Button(self.root, command=self.show_absolute_boxplot)
-        self.calculate_grades_button.config(text="boxplot abs.")
-
-        self.calculate_grades_button.grid(row=len(students) - 2, column=button_start_column)
-
-        # "boxplot rel." button
-        self.calculate_grades_button = Button(self.root, command=self.show_relative_boxplot)
-        self.calculate_grades_button.config(text="boxplot rel.")
-
-        self.calculate_grades_button.grid(row=len(students) - 3, column=button_start_column)
-
         # "Auswertung." button
         self.calculate_grades_button = Button(self.root, command=self.show_auswertung)
         self.calculate_grades_button.config(text="Auswertung")
 
-        self.calculate_grades_button.grid(row=len(students) - 3, column=button_start_column)
+        self.calculate_grades_button.grid(row=len(students) - 2, column=button_start_column)
 
 
         # confirm close
@@ -174,58 +158,6 @@ class PunkteTabelle(Tabelle):
         self.auswertung_window = Window(self)
         self.auswertung_window.mainloop()
 
-
-    def show_notendiagramm(self):
-        self.on_save(alert=False)
-
-        self.notendiagramm_window = Tk(className="Notendiagramm")
-
-        import notenDiagramm
-        self.notendiagramm = notenDiagramm.NotenDiagram(self.notendiagramm_window, self.students, self)
-        self.notendiagramm_window.mainloop()
-        pass
-
-    def show_relative_boxplot(self):
-        def get_data() -> dict[int, list[float]]:
-            min_points_per_task: dict[int, float] = {}
-            for task in range(self.task_count):
-                min_points_per_task[task] = -1
-                for row in range(len(self.students)):
-                    if min_points_per_task[task] < self.get_points_on_task_from_row(row+1, task):
-                        min_points_per_task[task] = self.get_points_on_task_from_row(row+1, task)
-
-
-            result: dict[int, list[float]] = {}
-            for task in range(self.task_count):
-                result[task] = []
-                min_points = min_points_per_task[task]
-                for row in range(len(self.students)):
-                    result[task].append(min_points / self.get_points_on_task_from_row(row+1, task))
-
-            return result
-
-        self.box_plot_window = Tk(className="punkte prozentual")
-        self.box_plot = relBoxPlot.Boxplot(self.box_plot_window, get_data())
-        self.box_plot.grid(row=0, column=0)
-
-        self.box_plot_window.mainloop()
-
-
-    def show_absolute_boxplot(self):
-        def get_data() -> dict[int, list[float]]:
-            result: dict[int, list[float]] = {}
-            for task in range(self.task_count):
-                result[task] = []
-                for row in range(len(self.students)):
-                    result[task].append(self.get_points_on_task_from_row(row+1, task))
-
-            return result
-
-        self.box_plot_window = Tk(className="Punkte absolut")
-        self.box_plot = absBoxPlot.Boxplot(self.box_plot_window, get_data())
-        self.box_plot.grid(row=0, column=0)
-
-        self.box_plot_window.mainloop()
 
     def on_close(self):
         # check for any changes
@@ -342,13 +274,6 @@ class PunkteTabelle(Tabelle):
         var: tkinter.StringVar = self._TEXT_VARIABLES[len(self.students) + 1, self.task_count + _TASK_START_INDEX + 1]
         var.set(str(sum_grades / len(self.students)))
 
-        if self.notendiagramm is not None:
-            # redraw the bar chart
-            grading.grading = sorted(grading.create_grade_table(), key=lambda d: d['note'], reverse=True)
-            grading.grade_all(self.students)
-            self.notendiagramm.notenspiegel = self.notendiagramm.create_notenspiegel()
-            self.notendiagramm.bar_chart.redraw(self.notendiagramm.notenspiegel)
-
     def vorname_from_row(self, row: int) -> str:
         return self._TEXT_VARIABLES[(row, _KEY_TO_COLUMN["Vorname"])].get()
 
@@ -363,6 +288,9 @@ class PunkteTabelle(Tabelle):
 
     def get_points_on_task_from_row(self, row: int, task: int) -> float:
         text: str = self._ENTRYS[(row, _TASK_START_INDEX + task)].get()
+        if len(text) < 1:
+            return 0
+
         if re.fullmatch(_POINTS_ENTRY_PATTERN, text):
             return float(text.replace(',', '.'))
         else:

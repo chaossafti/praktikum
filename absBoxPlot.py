@@ -16,25 +16,40 @@ def count_match(l: list, f):
 
 class Boxplot(Canvas):
 
-    def __init__(self, root, data: dict[int, list[float]]):
-        super().__init__(root, width=1000)
-        self.root = root
-        self.distance = self.winfo_reqwidth() * 0.9
+    def assign_vars(self):
         self.highest_value = 0
         self.lowest_value = 0
-        for l in data.values():
+
+        for l in self.data.values():
             self.highest_value = max(l) if max(l) > self.highest_value else self.highest_value
 
-        for l in data.values():
+        for l in self.data.values():
             self.lowest_value = min(l) if min(l) > self.lowest_value else self.lowest_value
 
+        self.sorted_data = sorted(self.data, key=lambda k: float(k))
+        self.steps = len(self.data)
+
+    def __init__(self, root, data: dict[int, list[float]]):
+        super().__init__(root, width=600)
         self.data = data
-        self.sorted_data = sorted(data, key=lambda k: float(k))
-        self.steps = len(data)
-        self.configure(height=500)
+        self.root = root
+        self.highest_value = 0
+        self.lowest_value = 0
+        self.sorted_data = None
+        self.steps = -1
+        self.assign_vars()
+
+        self.distance = self.winfo_reqwidth() * 0.9
+        self.configure(height=300)
         self.abs_x_start = 30
         self.abs_y_start = (self.winfo_reqheight() - 40)
 
+        self.draw()
+
+    def redraw(self, data: list[int, list[float]]):
+        self.data = data
+        self.assign_vars()
+        self.delete("all")
         self.draw()
 
     def draw(self):
@@ -53,6 +68,7 @@ class Boxplot(Canvas):
             # text
             self.create_text((start_x + end_x) / 2, self.abs_y_start + 10, text=str(self.sorted_data[i]))
 
+        print(self.highest_value)
         vertical_value_step_size: int = math.ceil(self.highest_value / (_VERTICAL_NODES-1))
         vertical_distance_step_size: int = int((self.winfo_reqheight() - 40) / (_VERTICAL_NODES-1))
         # vertical line

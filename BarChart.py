@@ -4,7 +4,7 @@ from tkinter import Canvas, Tk
 class BarChart(Canvas):
 
     def __init__(self, root, data: dict[str, int], width: int, dx: int, x: int, y: int):
-        super().__init__(master=root, width=x+(dx*(len(data)))+(len(data)*width))
+        super().__init__(master=root, width=min(500, x+(dx*(len(data)))+(len(data)*width)))
         self.x = x
         self.y = y
         self.dx = dx

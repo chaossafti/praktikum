@@ -2,9 +2,10 @@ from tkinter import *
 import tkinter
 
 
-class Tabelle:
+class Tabelle(Canvas):
 
     def __init__(self, root):
+        super().__init__(root)
         self._TEXT_VARIABLES = {}
         self._ENTRYS = {}
         self.root = root

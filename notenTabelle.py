@@ -2,7 +2,6 @@ from tkinter import Canvas, Button
 import pyautogui
 import TabellenGUi
 import grading
-from BarChart import BarChart
 from grading import grade_at_scale
 from Tabelle import Tabelle
 
@@ -10,36 +9,14 @@ from Tabelle import Tabelle
 _GRADE_ENTRY_WIDTH = 7
 _POINTS_ENTRY_WIDTH = 13
 
-class NotenDiagram(Tabelle):
-
-    def create_notenspiegel(self) -> dict[str, int]:
-        notenspiegel: dict[float, int] = {}
-        for student in self.students:
-            if student["note"] in notenspiegel:
-                notenspiegel[student["note"]] += 1
-            else:
-                notenspiegel[student["note"]] = 1
-
-        sorted_grades = sorted(grade_at_scale)
-        result: dict[str, int] = {}
-        for n in sorted_grades:
-            grade: float = grade_at_scale[n]
-            if grade in notenspiegel:
-                result[str(grade)] = notenspiegel[grade]
-            else:
-                result[str(grade)] = 0
-
-        return result
+class NotenTabelle(Tabelle):
 
     def __init__(self, root, students: list[dict], table: TabellenGUi):
         super().__init__(root)
         self.students = students
         self.tabelle_canvas = Canvas(self.root)
-        self.bar_chart_canvas = Canvas(self.root)
-        self.notenspiegel = self.create_notenspiegel()
-        self.bar_chart = BarChart(self.bar_chart_canvas, self.notenspiegel, 30, 5, 5, 250)
-        self.bar_chart.grid(row=2, column=0)
         self.points_table: TabellenGUi = table
+        self.notenspiegel = grading.create_notenspiegel(self.students)
 
         # place headers
         for n in grade_at_scale:
@@ -53,10 +30,6 @@ class NotenDiagram(Tabelle):
             self.place_entry(1, n, str(grade_count), width=_GRADE_ENTRY_WIDTH, master=self.tabelle_canvas)
 
         self.tabelle_canvas.pack(side="top", expand=False, anchor="nw")
-
-        # create a bar chart
-        self.bar_chart_canvas.location(0, 100)
-        self.bar_chart_canvas.pack(side="left", expand=False, anchor="nw")
 
         # place the editable Entries
 
