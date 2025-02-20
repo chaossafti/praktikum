@@ -5,6 +5,7 @@ from sys import argv
 if __name__ == '__main__':
     if len(argv) < 5:
         print("<studenten.csv> <schein_studenten.csv> <notentabelle.csv> <bestandentabelle.csv> <punktetabelle.csv>")
+        exit(1)
 
     students: list[dict] = read_csv(argv[1])
     schein_students: list[dict] = read_csv(argv[2])

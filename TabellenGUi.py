@@ -168,12 +168,15 @@ class PunkteTabelle(Tabelle):
         # noinspection PyUnresolvedReferences
         clicked: str | None = pyautogui.confirm(text="Schließen ohne zu speichern?",
                                                 buttons=[_SAVE_CLOSE, _CLOSE, _CANCEL])
+
         if clicked is None or clicked == _CANCEL:
-            pass
+            return
         elif clicked == _SAVE_CLOSE:
             self.on_save()
+            time.sleep(0.1)
             self.root.quit()
         elif clicked == _CLOSE:
+            time.sleep(0.1)
             self.root.quit()
 
     def on_save(self, alert: bool = True):

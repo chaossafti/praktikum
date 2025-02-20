@@ -56,7 +56,6 @@ def read_csv(file_path: str) -> list[dict]:
         return res
 
     if not os.path.exists(file_path):
-        print("file not exist")
         return []
 
 

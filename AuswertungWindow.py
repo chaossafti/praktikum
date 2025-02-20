@@ -104,7 +104,7 @@ class Window(Tk):
 
         # second diagram
         b = Button(self.button_canvas, text=str("<"), command=move_second_left)
-        b.grid(row=0, column=2, padx=500*0.5)
+        b.grid(row=0, column=2, padx=500*0.55)
 
         b = Button(self.button_canvas, text=str(">"), command=move_second_right)
         b.grid(row=0, column=3)

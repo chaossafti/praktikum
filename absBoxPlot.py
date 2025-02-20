@@ -68,7 +68,6 @@ class Boxplot(Canvas):
             # text
             self.create_text((start_x + end_x) / 2, self.abs_y_start + 10, text=str(self.sorted_data[i]))
 
-        print(self.highest_value)
         vertical_value_step_size: int = math.ceil(self.highest_value / (_VERTICAL_NODES-1))
         vertical_distance_step_size: int = int((self.winfo_reqheight() - 40) / (_VERTICAL_NODES-1))
         # vertical line
@@ -131,7 +130,6 @@ class Boxplot(Canvas):
             self.create_line(x, q1_y, x, y_lowest_value, fill="black", width=2)              # lowest 25%
             self.create_line(x, q3_y, x, start_y, fill="black", width=2)                     # highest 25%
 
-    print()
 
 
 
