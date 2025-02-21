@@ -46,3 +46,4 @@ class Kreisdiagram(Canvas):
         for v, c in self.data:
             self.create_arc(start_x, start_y, end_x, end_y, start=start, extent=v * 3.6, fill=c, outline="black", width=2)
             start = start + v * 3.6
+

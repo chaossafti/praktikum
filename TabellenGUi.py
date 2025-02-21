@@ -333,3 +333,4 @@ def start(students: list[dict], output_paths: tuple[str, str, str]) -> None:
 
     root.mainloop()
 
+

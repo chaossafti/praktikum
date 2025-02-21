@@ -75,3 +75,4 @@ class NotenTabelle(Tabelle):
         # update grades inside the points table
         self.points_table.reload()
 
+

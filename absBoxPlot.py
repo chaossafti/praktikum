@@ -140,3 +140,4 @@ if __name__ == '__main__':
 
     Boxplot(w, d).grid(row=0, column=0)
     w.mainloop()
+

@@ -23,3 +23,4 @@ if __name__ == '__main__':
         schein_students.append(student)
 
     generate_output((argv[3], argv[4], argv[5]), schein_students)
+

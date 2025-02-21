@@ -44,3 +44,4 @@ def generate_tables(students: list[dict], notentabelle_file: str, bestandentabel
     # store both tables
     write_csv(notentabelle_file, grade_table)
     write_csv(bestandentabelle_file, succeed_table)
+

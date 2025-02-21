@@ -135,3 +135,4 @@ def write_csv(file_path: str, content: list[dict]) -> None:
 
                 first_value = False
             f.write('\n')
+

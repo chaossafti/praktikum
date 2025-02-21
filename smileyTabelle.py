@@ -130,3 +130,4 @@ if __name__ == '__main__':
     w = Tk()
     s = SmileyTabelle(w,3, None)
     w.mainloop()
+

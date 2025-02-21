@@ -33,3 +33,4 @@ class Tabelle(Canvas):
         self._TEXT_VARIABLES[(row, column)] = var
 
         return e, var
+
